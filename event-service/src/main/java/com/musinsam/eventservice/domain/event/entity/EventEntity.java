@@ -44,7 +44,7 @@ public class EventEntity extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private EventStatus status = EventStatus.SCHEDULED;
+  private EventStatus status;
 
 
 }
