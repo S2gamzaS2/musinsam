@@ -36,16 +36,12 @@ public class ReqEventPostDtoApiV1 {
     @NotNull(message = "이벤트 종료 일시를 입력해주세요.")
     private ZonedDateTime endTime;
 
-    @NotNull(message = "최대 구매 가능 수량을 입력해주세요.")
-    private Integer maxPurchase;
-
 
     public EventEntity toEntity() {
       return EventEntity.builder()
           .name(name)
           .startTime(startTime)
           .endTime(endTime)
-          .maxPurchase(maxPurchase)
           .build();
     }
 

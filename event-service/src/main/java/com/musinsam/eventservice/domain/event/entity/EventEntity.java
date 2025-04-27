@@ -1,7 +1,7 @@
 package com.musinsam.eventservice.domain.event.entity;
 
 import com.musinsam.common.domain.BaseEntity;
-import com.musinsam.eventservice.domain.event.EventStatus;
+import com.musinsam.eventservice.domain.event.vo.EventStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -45,10 +45,6 @@ public class EventEntity extends BaseEntity {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private EventStatus status = EventStatus.SCHEDULED;
-
-  @Setter
-  @Column
-  private Integer maxPurchase;
 
 
 }
