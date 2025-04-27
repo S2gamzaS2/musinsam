@@ -96,10 +96,9 @@ public class ProductControllerApiV1 {
       @RequestParam(required = false) BigDecimal maxPrice,
       @RequestParam(required = false) ProductStatus status,
       @RequestParam(required = false) String sortBy,
-      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size
   ) {
-    log.info("Product-service: Request received for products");
     return ResponseEntity.ok(new ApiResponse<>(
         PRODUCT_GET_LIST_SUCCESS.getCode(),
         PRODUCT_GET_LIST_SUCCESS.getMessage(),
