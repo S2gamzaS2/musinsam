@@ -92,7 +92,21 @@ public class ProductServiceImplApiV1 implements ProductServiceApiV1 {
       int page,
       int size) {
 
-    Pageable pageable = PageRequest.of(page - 1, size);
+    if (page < 0) {
+      page = 0;
+    }
+    if (size < 1) {
+      size = 10;
+    }
+    if (minPrice != null && minPrice.compareTo(BigDecimal.ZERO) < 0) {
+      minPrice = BigDecimal.ZERO;
+    }
+    List<String> sorts = List.of("price_asc", "price_desc");
+    if (sortBy != null && !sorts.contains(sortBy)) {
+      sortBy = null;
+    }
+
+    Pageable pageable = PageRequest.of(page, size);
     Page<ProductEntity> productEntityPage = productRepositoryCustom.findProductWithConditions(
         minPrice, maxPrice, status, sortBy, pageable);
 
