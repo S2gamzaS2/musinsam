@@ -8,8 +8,6 @@ public interface ProductRepository {
 
   Optional<ProductEntity> findByIdAndDeletedAtIsNull(UUID productId);
 
-//  Page<ProductEntity> findByDeletedAtIsNull(PageRequest pageRequest);
-
   ProductEntity save(ProductEntity product);
 
 }
