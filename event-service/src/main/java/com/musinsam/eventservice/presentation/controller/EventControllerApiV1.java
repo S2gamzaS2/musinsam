@@ -28,6 +28,7 @@ import com.musinsam.eventservice.application.service.EventServiceApiV1;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/events")
 @RequiredArgsConstructor
@@ -152,6 +154,7 @@ public class EventControllerApiV1 {
       @CurrentUser CurrentUserDtoApiV1 currentUser,
       @Valid @RequestBody ReqEventPostByEventIdDtoApiV1 dto
   ) {
+    eventService.addEventProduct(eventId, dto);
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_ADD_PRODUCT_SUCCESS.getCode(),
         EVENT_ADD_PRODUCT_SUCCESS.getMessage(),

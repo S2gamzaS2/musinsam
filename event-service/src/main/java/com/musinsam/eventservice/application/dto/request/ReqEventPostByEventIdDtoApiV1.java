@@ -1,5 +1,6 @@
 package com.musinsam.eventservice.application.dto.request;
 
+import com.musinsam.eventservice.domain.event.entity.EventEntity;
 import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -21,6 +22,10 @@ public class ReqEventPostByEventIdDtoApiV1 {
   @NotNull(message = "등록할 이벤트 상품 정보를 입력해주세요.")
   private EventProduct eventProduct;
 
+  @Getter
+  @NoArgsConstructor
+  @Builder
+  @AllArgsConstructor
   public static class EventProduct {
 
     @NotNull(message = "상품 ID를 입력해주세요.")
@@ -32,11 +37,12 @@ public class ReqEventPostByEventIdDtoApiV1 {
     private Integer discountRate;
 
 
-    public EventProductEntity toEntity() {
+    public EventProductEntity toEntity(EventEntity eventEntity) {
       return EventProductEntity.builder()
           .productId(productId)
           .discountRate(discountRate)
           .soldQuantity(0)
+          .event(eventEntity)
           .build();
     }
   }

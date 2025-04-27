@@ -36,7 +36,6 @@ public class EventProductEntity extends BaseEntity {
   @Setter
   private Integer discountRate;
 
-
   @Column(nullable = false)
   private Integer soldQuantity;
 
