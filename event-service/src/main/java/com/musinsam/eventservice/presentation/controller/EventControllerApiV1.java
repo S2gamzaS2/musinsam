@@ -24,8 +24,10 @@ import com.musinsam.eventservice.application.dto.request.ReqEventPutDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetProductByEventIdDtoApiV1;
+import com.musinsam.eventservice.application.service.EventServiceApiV1;
 import jakarta.validation.Valid;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +41,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/events")
+@RequiredArgsConstructor
 public class EventControllerApiV1 {
+
+  private final EventServiceApiV1 eventService;
+
 
   /**
    * 이벤트 등록
@@ -50,12 +56,13 @@ public class EventControllerApiV1 {
       @Valid @RequestBody ReqEventPostDtoApiV1 dto,
       @CurrentUser CurrentUserDtoApiV1 currentUser
   ) {
+    eventService.createEvent(dto, currentUser);
+
     return ResponseEntity.ok(new ApiResponse<>(
-            EVENT_CREATE_SUCCESS.getCode(),
-            EVENT_CREATE_SUCCESS.getMessage(),
-            null
-        )
-    );
+        EVENT_CREATE_SUCCESS.getCode(),
+        EVENT_CREATE_SUCCESS.getMessage(),
+        null
+    ));
   }
 
   /**
