@@ -2,6 +2,8 @@ package com.musinsam.eventservice.application.dto.request;
 
 import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +27,9 @@ public class ReqEventPutByEventProductIdDtoApiV1 {
   @NoArgsConstructor
   public static class EventProduct {
 
+    @NotNull(message = "수정할 이벤트 상품의 할인율을 입력하세요.")
+    @Min(value = 0, message = "할인율은 0 이상이어야 합니다.")
+    @Max(value = 100, message = "할인율은 100 이하이어야 합니다.")
     private Integer discountRate;
 
     public void updateOf(EventProductEntity eventProductEntity) {
