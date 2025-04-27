@@ -1,8 +1,7 @@
 package com.musinsam.eventservice.application.dto.response;
 
-import com.musinsam.eventservice.domain.event.EventStatus;
 import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
-import java.math.BigDecimal;
+import com.musinsam.eventservice.domain.event.vo.EventStatus;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -53,10 +52,7 @@ public class ResEventGetProductByEventIdDtoApiV1 {
       private UUID id;
       private UUID eventId;
       private UUID productId;
-      private BigDecimal originPrice;
-      private BigDecimal salePrice;
       private Integer discountRate;
-      private Integer maxPurchase;
       private Integer soldQuantity;
       private EventStatus status;
 
@@ -72,10 +68,7 @@ public class ResEventGetProductByEventIdDtoApiV1 {
             .id(eventProductEntity.getId())
             .eventId(eventProductEntity.getEvent().getId())
             .productId(eventProductEntity.getProductId())
-            .originPrice(eventProductEntity.getOriginPrice())
-            .salePrice(eventProductEntity.getSalePrice())
             .discountRate(eventProductEntity.getDiscountRate())
-            .maxPurchase(eventProductEntity.getMaxPurchase())
             .soldQuantity(eventProductEntity.getSoldQuantity())
             .status(eventProductEntity.getEvent().getStatus())
             .build();

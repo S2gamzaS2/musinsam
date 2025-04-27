@@ -14,18 +14,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReqEventPutByEventIdDtoApiV1 {
+public class ReqEventPutDtoApiV1 {
 
   @Valid
   @NotNull(message = "수정할 이벤트 정보를 입력해주세요.")
-  private UpdatedEvent updatedEvent;
+  private Event event;
 
 
   @Getter
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class UpdatedEvent {
+  public static class Event {
 
     @NotBlank(message = "이벤트 이름을 입력해주세요.")
     private String name;
@@ -36,15 +36,11 @@ public class ReqEventPutByEventIdDtoApiV1 {
     @NotNull(message = "이벤트 종료 일시를 입력해주세요.")
     private ZonedDateTime endTime;
 
-    @NotNull(message = "최대 구매 가능 수량을 입력해주세요.")
-    private Integer maxPurchase;
-
 
     public void updateOf(EventEntity eventEntity) {
       eventEntity.setName(name);
       eventEntity.setStartTime(startTime);
       eventEntity.setEndTime(endTime);
-      eventEntity.setMaxPurchase(maxPurchase);
     }
 
   }

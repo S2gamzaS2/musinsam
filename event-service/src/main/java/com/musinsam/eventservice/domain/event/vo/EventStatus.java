@@ -1,4 +1,4 @@
-package com.musinsam.eventservice.domain.event;
+package com.musinsam.eventservice.domain.event.vo;
 
 import java.util.stream.Stream;
 

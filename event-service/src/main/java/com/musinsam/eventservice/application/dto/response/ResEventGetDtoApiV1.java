@@ -1,7 +1,7 @@
 package com.musinsam.eventservice.application.dto.response;
 
-import com.musinsam.eventservice.domain.event.EventStatus;
 import com.musinsam.eventservice.domain.event.entity.EventEntity;
+import com.musinsam.eventservice.domain.event.vo.EventStatus;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
