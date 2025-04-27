@@ -22,7 +22,9 @@ import com.musinsam.productservice.application.dto.response.ResProductGetByProdu
 import com.musinsam.productservice.application.dto.response.ResProductGetDtoApiV1;
 import com.musinsam.productservice.application.dto.response.ResProductGetStockDtoApiV1;
 import com.musinsam.productservice.application.service.ProductServiceApiV1;
+import com.musinsam.productservice.domain.product.vo.ProductStatus;
 import jakarta.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -90,15 +92,20 @@ public class ProductControllerApiV1 {
   @GetMapping
   @CustomPreAuthorize(userRoleType = {ROLE_USER, ROLE_COMPANY, ROLE_MASTER})
   public ResponseEntity<ApiResponse<ResProductGetDtoApiV1>> getProductList(
-      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(required = false) BigDecimal minPrice,
+      @RequestParam(required = false) BigDecimal maxPrice,
+      @RequestParam(required = false) ProductStatus status,
+      @RequestParam(required = false) String sortBy,
+      @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size
   ) {
     return ResponseEntity.ok(new ApiResponse<>(
         PRODUCT_GET_LIST_SUCCESS.getCode(),
         PRODUCT_GET_LIST_SUCCESS.getMessage(),
-        productService.getProductList(page, size)
+        productService.getProductList(minPrice, maxPrice, status, sortBy, page, size)
     ));
   }
+
 
   /**
    * 상품 수정

@@ -1,6 +1,7 @@
 package com.musinsam.productservice.application.dto.response;
 
 import com.musinsam.productservice.domain.product.entity.ProductEntity;
+import com.musinsam.productservice.domain.product.vo.ProductStatus;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -49,12 +50,14 @@ public class ResProductGetDtoApiV1 {
       private String name;
       private BigDecimal price;
       private BigDecimal discountPrice;
+      private ProductStatus status;
 
       public static Product from(ProductEntity productEntity) {
         return Product.builder()
             .name(productEntity.getName())
             .price(productEntity.getPrice())
             .discountPrice(productEntity.getDiscountPrice())
+            .status(productEntity.getStatus())
             .build();
       }
 

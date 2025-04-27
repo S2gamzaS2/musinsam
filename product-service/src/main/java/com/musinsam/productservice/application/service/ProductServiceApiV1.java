@@ -7,8 +7,10 @@ import com.musinsam.productservice.application.dto.request.ReqProductPutByProduc
 import com.musinsam.productservice.application.dto.response.ResProductGetByProductIdDtoApiV1;
 import com.musinsam.productservice.application.dto.response.ResProductGetDtoApiV1;
 import com.musinsam.productservice.application.dto.response.ResProductGetStockDtoApiV1;
+import com.musinsam.productservice.domain.product.vo.ProductStatus;
 import com.musinsam.productservice.infrastructure.s3.S3Folder;
 import jakarta.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +22,12 @@ public interface ProductServiceApiV1 {
 
   ResProductGetByProductIdDtoApiV1 getById(UUID productId);
 
-  ResProductGetDtoApiV1 getProductList(int page, int size);
+  ResProductGetDtoApiV1 getProductList(BigDecimal minPrice,
+      BigDecimal maxPrice,
+      ProductStatus status,
+      String sortBy,
+      int page,
+      int size);
 
   void updateProduct(CurrentUserDtoApiV1 currentUser, UUID productId,
       @Valid ReqProductPutByProductIdDtoApiV1 dto,

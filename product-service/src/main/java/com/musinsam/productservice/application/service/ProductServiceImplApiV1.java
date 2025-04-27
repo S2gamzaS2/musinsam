@@ -15,12 +15,14 @@ import com.musinsam.productservice.domain.product.entity.ProductEntity;
 import com.musinsam.productservice.domain.product.entity.ProductImageEntity;
 import com.musinsam.productservice.domain.product.repository.ProductImageRepository;
 import com.musinsam.productservice.domain.product.repository.ProductRepository;
+import com.musinsam.productservice.domain.product.repository.ProductRepositoryCustom;
 import com.musinsam.productservice.domain.product.vo.ProductStatus;
 import com.musinsam.productservice.global.exception.ProductErrorCode;
 import com.musinsam.productservice.infrastructure.dto.res.ResShopCouponDtoApiV1;
 import com.musinsam.productservice.infrastructure.s3.S3Folder;
 import com.musinsam.productservice.infrastructure.s3.service.S3Service;
 import io.micrometer.common.util.StringUtils;
+import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +32,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +44,7 @@ public class ProductServiceImplApiV1 implements ProductServiceApiV1 {
 
   private final ProductRepository productRepository;
   private final ProductImageRepository productImageRepository;
+  private final ProductRepositoryCustom productRepositoryCustom;
   private final S3Service s3Service;
   private final ShopClientApiV1 shopClientApiV1;
   private final CouponClientApiV1 couponClientApiV1;
@@ -80,11 +84,31 @@ public class ProductServiceImplApiV1 implements ProductServiceApiV1 {
 
   @Override
   @Transactional(readOnly = true)
-  public ResProductGetDtoApiV1 getProductList(int page, int size) {
+  public ResProductGetDtoApiV1 getProductList(
+      BigDecimal minPrice,
+      BigDecimal maxPrice,
+      ProductStatus status,
+      String sortBy,
+      int page,
+      int size) {
 
-    PageRequest pageRequest = PageRequest.of(page - 1, size);
-    Page<ProductEntity> productEntityPage = productRepository.findByDeletedAtIsNull(
-        pageRequest);
+    if (page < 0) {
+      page = 0;
+    }
+    if (size < 1) {
+      size = 10;
+    }
+    if (minPrice != null && minPrice.compareTo(BigDecimal.ZERO) < 0) {
+      minPrice = BigDecimal.ZERO;
+    }
+    List<String> sorts = List.of("price_asc", "price_desc");
+    if (sortBy != null && !sorts.contains(sortBy)) {
+      sortBy = null;
+    }
+
+    Pageable pageable = PageRequest.of(page, size);
+    Page<ProductEntity> productEntityPage = productRepositoryCustom.findProductWithConditions(
+        minPrice, maxPrice, status, sortBy, pageable);
 
     return ResProductGetDtoApiV1.of(productEntityPage);
   }
