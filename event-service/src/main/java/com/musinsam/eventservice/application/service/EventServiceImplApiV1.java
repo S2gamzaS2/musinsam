@@ -3,12 +3,14 @@ package com.musinsam.eventservice.application.service;
 import com.musinsam.common.user.CurrentUserDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostDtoApiV1;
+import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
 import com.musinsam.eventservice.domain.event.entity.EventEntity;
 import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
 import com.musinsam.eventservice.domain.event.repository.EventProductRepository;
 import com.musinsam.eventservice.domain.event.repository.EventRepository;
 import com.musinsam.eventservice.domain.event.vo.EventStatus;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -61,5 +63,17 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
     }
 
     return ResEventGetDtoApiV1.of(eventEntityPage);
+  }
+
+  @Override
+  public ResEventGetByEventIdDtoApiV1 getEvent(UUID eventId, CurrentUserDtoApiV1 currentUser) {
+
+    EventEntity eventEntity = eventRepository.findByIdAndDeletedAtIsNull(eventId)
+        .orElseThrow(() -> new RuntimeException("해딩 이벤트 없음"));
+
+    List<EventProductEntity> eventProductEntityList = eventProductRepository.findByEventIdAndDeletedAtIsNull(
+        eventId);
+
+    return ResEventGetByEventIdDtoApiV1.of(eventEntity, eventProductEntityList);
   }
 }

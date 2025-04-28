@@ -54,7 +54,10 @@ public class ResEventGetByEventIdDtoApiV1 {
           .build();
     }
 
+    @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class EventProduct {
 
       private UUID productId;
