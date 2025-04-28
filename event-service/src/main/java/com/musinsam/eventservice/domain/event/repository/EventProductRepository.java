@@ -1,6 +1,7 @@
 package com.musinsam.eventservice.domain.event.repository;
 
 import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,4 +18,6 @@ public interface EventProductRepository {
 
   Optional<EventProductEntity> findByIdAndEventIdAndDeletedAtIsNull(UUID eventProductId,
       UUID eventId);
+
+  boolean existsByProductIdAndDeletedAtIsNull(@NotNull(message = "상품 ID를 입력해주세요.") UUID productId);
 }

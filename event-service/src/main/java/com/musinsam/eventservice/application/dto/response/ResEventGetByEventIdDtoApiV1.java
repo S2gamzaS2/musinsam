@@ -70,6 +70,7 @@ public class ResEventGetByEventIdDtoApiV1 {
       public static EventProduct from(EventProductEntity eventProductEntity) {
         return EventProduct.builder()
             .productId(eventProductEntity.getProductId())
+            .productName(eventProductEntity.getProductName())
             .discountRate(eventProductEntity.getDiscountRate())
             .soldQuantity(eventProductEntity.getSoldQuantity())
             .build();

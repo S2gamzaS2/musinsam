@@ -32,6 +32,9 @@ public class EventProductEntity extends BaseEntity {
   @Column(nullable = false)
   private UUID productId;
 
+  @Column(nullable = false)
+  private String productName;
+
   @Column
   @Setter
   private Integer discountRate;

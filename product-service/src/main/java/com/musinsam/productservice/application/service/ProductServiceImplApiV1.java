@@ -18,6 +18,7 @@ import com.musinsam.productservice.domain.product.repository.ProductRepository;
 import com.musinsam.productservice.domain.product.repository.ProductRepositoryCustom;
 import com.musinsam.productservice.domain.product.vo.ProductStatus;
 import com.musinsam.productservice.global.exception.ProductErrorCode;
+import com.musinsam.productservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import com.musinsam.productservice.infrastructure.dto.res.ResShopCouponDtoApiV1;
 import com.musinsam.productservice.infrastructure.s3.S3Folder;
 import com.musinsam.productservice.infrastructure.s3.service.S3Service;
@@ -285,5 +286,14 @@ public class ProductServiceImplApiV1 implements ProductServiceApiV1 {
 
     productImageRepository.save(productImage);
 
+  }
+
+
+  @Override
+  public ResProductInfoGetByProductId getProductInfo(UUID productId) {
+
+    ProductEntity productEntity = findProductEntityById(productId);
+
+    return ResProductInfoGetByProductId.of(productEntity);
   }
 }
