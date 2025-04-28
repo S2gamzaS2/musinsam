@@ -197,6 +197,7 @@ public class EventControllerApiV1 {
       @CurrentUser CurrentUserDtoApiV1 currentUser,
       @Valid @RequestBody ReqEventPutByEventProductIdDtoApiV1 dto
   ) {
+    eventService.updateEventProduct(eventId, eventProductId, currentUser, dto);
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_UPDATE_PRODUCT_SUCCESS.getCode(),
         EVENT_UPDATE_PRODUCT_SUCCESS.getMessage(),

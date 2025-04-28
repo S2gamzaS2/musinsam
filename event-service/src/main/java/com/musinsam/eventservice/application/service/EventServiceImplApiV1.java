@@ -3,6 +3,7 @@ package com.musinsam.eventservice.application.service;
 import com.musinsam.common.user.CurrentUserDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostDtoApiV1;
+import com.musinsam.eventservice.application.dto.request.ReqEventPutByEventProductIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPutDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
@@ -52,6 +53,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public ResEventGetDtoApiV1 getEventList(CurrentUserDtoApiV1 currentUser, Boolean active, int page,
       int size) {
 
@@ -69,6 +71,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public ResEventGetByEventIdDtoApiV1 getEvent(UUID eventId, CurrentUserDtoApiV1 currentUser) {
 
     EventEntity eventEntity = eventRepository.findByIdAndDeletedAtIsNull(eventId)
@@ -111,6 +114,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public ResEventGetProductByEventIdDtoApiV1 getEventProductList(UUID eventId,
       CurrentUserDtoApiV1 currentUser, int page, int size) {
 
@@ -118,5 +122,17 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
     Page<EventProductEntity> eventProductEntityPage = eventProductRepository.findByEventIdAndDeletedAtIsNull(
         eventId, pageable);
     return ResEventGetProductByEventIdDtoApiV1.of(eventProductEntityPage);
+  }
+
+  @Override
+  @Transactional
+  public void updateEventProduct(UUID eventId, UUID eventProductId, CurrentUserDtoApiV1 currentUser,
+      ReqEventPutByEventProductIdDtoApiV1 dto) {
+
+    EventProductEntity eventProductEntity = eventProductRepository.findByIdAndEventIdAndDeletedAtIsNull(
+            eventProductId, eventId)
+        .orElseThrow(() -> new RuntimeException("해당 이벤트 상품 없음"));
+
+    dto.getEventProduct().updateOf(eventProductEntity);
   }
 }
