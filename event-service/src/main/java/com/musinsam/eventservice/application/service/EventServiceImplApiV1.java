@@ -3,6 +3,7 @@ package com.musinsam.eventservice.application.service;
 import com.musinsam.common.user.CurrentUserDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostDtoApiV1;
+import com.musinsam.eventservice.application.dto.request.ReqEventPutDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
 import com.musinsam.eventservice.domain.event.entity.EventEntity;
@@ -75,5 +76,15 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
         eventId);
 
     return ResEventGetByEventIdDtoApiV1.of(eventEntity, eventProductEntityList);
+  }
+
+  @Override
+  @Transactional
+  public void updateEvent(UUID eventId, ReqEventPutDtoApiV1 dto, CurrentUserDtoApiV1 currentUser) {
+
+    EventEntity eventEntity = eventRepository.findByIdAndDeletedAtIsNull(eventId)
+        .orElseThrow(() -> new RuntimeException("해딩 이벤트 없음"));
+
+    dto.getEvent().updateOf(eventEntity);
   }
 }

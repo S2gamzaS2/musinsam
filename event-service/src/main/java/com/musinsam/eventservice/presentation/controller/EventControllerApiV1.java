@@ -99,6 +99,7 @@ public class EventControllerApiV1 {
       @CurrentUser CurrentUserDtoApiV1 currentUser,
       @Valid @RequestBody ReqEventPutDtoApiV1 dto
   ) {
+    eventService.updateEvent(eventId, dto, currentUser);
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_UPDATE_SUCCESS.getCode(),
         EVENT_UPDATE_SUCCESS.getMessage(),

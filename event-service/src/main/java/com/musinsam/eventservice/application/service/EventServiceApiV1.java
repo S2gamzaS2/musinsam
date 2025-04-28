@@ -3,6 +3,7 @@ package com.musinsam.eventservice.application.service;
 import com.musinsam.common.user.CurrentUserDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostDtoApiV1;
+import com.musinsam.eventservice.application.dto.request.ReqEventPutDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
 import jakarta.validation.Valid;
@@ -18,4 +19,6 @@ public interface EventServiceApiV1 {
       int size);
 
   ResEventGetByEventIdDtoApiV1 getEvent(UUID eventId, CurrentUserDtoApiV1 currentUser);
+
+  void updateEvent(UUID eventId, @Valid ReqEventPutDtoApiV1 dto, CurrentUserDtoApiV1 currentUser);
 }
