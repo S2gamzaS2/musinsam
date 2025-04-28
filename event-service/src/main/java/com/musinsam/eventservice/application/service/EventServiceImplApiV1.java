@@ -135,4 +135,17 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
 
     dto.getEventProduct().updateOf(eventProductEntity);
   }
+
+  @Override
+  @Transactional
+  public void deleteEventProduct(UUID eventId, UUID eventProductId,
+      CurrentUserDtoApiV1 currentUser) {
+
+    EventProductEntity eventProductEntity = eventProductRepository.findByIdAndEventIdAndDeletedAtIsNull(
+            eventProductId, eventId)
+        .orElseThrow(() -> new RuntimeException("해당 이벤트 상품 없음"));
+
+    eventProductEntity.softDelete(currentUser.userId(), ZoneId.systemDefault());
+
+  }
 }

@@ -31,4 +31,6 @@ public interface EventServiceApiV1 {
 
   void updateEventProduct(UUID eventId, UUID eventProductId, CurrentUserDtoApiV1 currentUser,
       @Valid ReqEventPutByEventProductIdDtoApiV1 dto);
+
+  void deleteEventProduct(UUID eventId, UUID eventProductId, CurrentUserDtoApiV1 currentUser);
 }
