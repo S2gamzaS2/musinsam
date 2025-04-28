@@ -52,6 +52,7 @@ public class ResEventGetProductByEventIdDtoApiV1 {
       private UUID id;
       private UUID eventId;
       private UUID productId;
+      private String productName;
       private Integer discountRate;
       private Integer soldQuantity;
       private EventStatus status;
@@ -68,6 +69,7 @@ public class ResEventGetProductByEventIdDtoApiV1 {
             .id(eventProductEntity.getId())
             .eventId(eventProductEntity.getEvent().getId())
             .productId(eventProductEntity.getProductId())
+            .productName(eventProductEntity.getProductName())
             .discountRate(eventProductEntity.getDiscountRate())
             .soldQuantity(eventProductEntity.getSoldQuantity())
             .status(eventProductEntity.getEvent().getStatus())

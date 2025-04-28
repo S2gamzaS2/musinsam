@@ -8,6 +8,7 @@ import com.musinsam.productservice.application.dto.response.ResProductGetByProdu
 import com.musinsam.productservice.application.dto.response.ResProductGetDtoApiV1;
 import com.musinsam.productservice.application.dto.response.ResProductGetStockDtoApiV1;
 import com.musinsam.productservice.domain.product.vo.ProductStatus;
+import com.musinsam.productservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import com.musinsam.productservice.infrastructure.s3.S3Folder;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
@@ -50,4 +51,6 @@ public interface ProductServiceApiV1 {
   Boolean checkAndReduceStock(UUID productId, Integer quantity);
 
   void restoreStock(UUID productId, Integer quantity);
+
+  ResProductInfoGetByProductId getProductInfo(UUID productId);
 }

@@ -37,9 +37,10 @@ public class ReqEventPostByEventIdDtoApiV1 {
     private Integer discountRate;
 
 
-    public EventProductEntity toEntity(EventEntity eventEntity) {
+    public EventProductEntity toEntity(EventEntity eventEntity, String productName) {
       return EventProductEntity.builder()
           .productId(productId)
+          .productName(productName)
           .discountRate(discountRate)
           .soldQuantity(0)
           .event(eventEntity)
