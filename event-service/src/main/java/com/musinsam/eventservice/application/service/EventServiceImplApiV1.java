@@ -42,12 +42,11 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   @Transactional
   public void addEventProduct(UUID eventId, ReqEventPostByEventIdDtoApiV1 dto) {
 
-    EventEntity event = eventRepository.findByIdAndDeletedAtIsNull(eventId)
-        .orElseThrow(() -> new RuntimeException());
+    EventEntity eventEntity = findEventEntityById(eventId);
 
     //TODO: Product와 통신하여 해당 상품이 있는지 확인 & 이름 가져오기?
 
-    EventProductEntity eventProductEntity = dto.getEventProduct().toEntity(event);
+    EventProductEntity eventProductEntity = dto.getEventProduct().toEntity(eventEntity);
 
     eventProductRepository.save(eventProductEntity);
   }
@@ -74,8 +73,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   @Transactional(readOnly = true)
   public ResEventGetByEventIdDtoApiV1 getEvent(UUID eventId, CurrentUserDtoApiV1 currentUser) {
 
-    EventEntity eventEntity = eventRepository.findByIdAndDeletedAtIsNull(eventId)
-        .orElseThrow(() -> new RuntimeException("해딩 이벤트 없음"));
+    EventEntity eventEntity = findEventEntityById(eventId);
 
     List<EventProductEntity> eventProductEntityList = eventProductRepository.findByEventIdAndDeletedAtIsNull(
         eventId);
@@ -87,8 +85,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   @Transactional
   public void updateEvent(UUID eventId, ReqEventPutDtoApiV1 dto, CurrentUserDtoApiV1 currentUser) {
 
-    EventEntity eventEntity = eventRepository.findByIdAndDeletedAtIsNull(eventId)
-        .orElseThrow(() -> new RuntimeException("해딩 이벤트 없음"));
+    EventEntity eventEntity = findEventEntityById(eventId);
 
     dto.getEvent().updateOf(eventEntity);
   }
@@ -97,8 +94,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   @Transactional
   public void deleteEvent(UUID eventId, CurrentUserDtoApiV1 currentUser) {
 
-    EventEntity eventEntity = eventRepository.findByIdAndDeletedAtIsNull(eventId)
-        .orElseThrow(() -> new RuntimeException("해딩 이벤트 없음"));
+    EventEntity eventEntity = findEventEntityById(eventId);
 
     eventEntity.softDelete(currentUser.userId(), ZoneId.systemDefault());
 
@@ -129,9 +125,8 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   public void updateEventProduct(UUID eventId, UUID eventProductId, CurrentUserDtoApiV1 currentUser,
       ReqEventPutByEventProductIdDtoApiV1 dto) {
 
-    EventProductEntity eventProductEntity = eventProductRepository.findByIdAndEventIdAndDeletedAtIsNull(
-            eventProductId, eventId)
-        .orElseThrow(() -> new RuntimeException("해당 이벤트 상품 없음"));
+    EventProductEntity eventProductEntity = findEventProductEntityByIdAndEventId(eventProductId,
+        eventId);
 
     dto.getEventProduct().updateOf(eventProductEntity);
   }
@@ -141,11 +136,21 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   public void deleteEventProduct(UUID eventId, UUID eventProductId,
       CurrentUserDtoApiV1 currentUser) {
 
-    EventProductEntity eventProductEntity = eventProductRepository.findByIdAndEventIdAndDeletedAtIsNull(
-            eventProductId, eventId)
-        .orElseThrow(() -> new RuntimeException("해당 이벤트 상품 없음"));
+    EventProductEntity eventProductEntity = findEventProductEntityByIdAndEventId(eventProductId,
+        eventId);
 
     eventProductEntity.softDelete(currentUser.userId(), ZoneId.systemDefault());
 
+  }
+
+  private EventEntity findEventEntityById(UUID eventId) {
+    return eventRepository.findByIdAndDeletedAtIsNull(eventId)
+        .orElseThrow(() -> new RuntimeException("해딩 이벤트 없음"));
+  }
+
+  private EventProductEntity findEventProductEntityByIdAndEventId(UUID id, UUID eventId) {
+    return eventProductRepository.findByIdAndEventIdAndDeletedAtIsNull(
+            id, eventId)
+        .orElseThrow(() -> new RuntimeException("해당 이벤트 상품 없음"));
   }
 }
