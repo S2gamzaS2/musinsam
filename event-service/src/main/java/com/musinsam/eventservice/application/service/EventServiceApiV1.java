@@ -21,4 +21,6 @@ public interface EventServiceApiV1 {
   ResEventGetByEventIdDtoApiV1 getEvent(UUID eventId, CurrentUserDtoApiV1 currentUser);
 
   void updateEvent(UUID eventId, @Valid ReqEventPutDtoApiV1 dto, CurrentUserDtoApiV1 currentUser);
+
+  void deleteEvent(UUID eventId, CurrentUserDtoApiV1 currentUser);
 }

@@ -11,6 +11,7 @@ import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
 import com.musinsam.eventservice.domain.event.repository.EventProductRepository;
 import com.musinsam.eventservice.domain.event.repository.EventRepository;
 import com.musinsam.eventservice.domain.event.vo.EventStatus;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -86,5 +87,25 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
         .orElseThrow(() -> new RuntimeException("해딩 이벤트 없음"));
 
     dto.getEvent().updateOf(eventEntity);
+  }
+
+  @Override
+  @Transactional
+  public void deleteEvent(UUID eventId, CurrentUserDtoApiV1 currentUser) {
+
+    EventEntity eventEntity = eventRepository.findByIdAndDeletedAtIsNull(eventId)
+        .orElseThrow(() -> new RuntimeException("해딩 이벤트 없음"));
+
+    eventEntity.softDelete(currentUser.userId(), ZoneId.systemDefault());
+
+    List<EventProductEntity> eventProductEntityList = eventProductRepository.findByEventIdAndDeletedAtIsNull(
+        eventId);
+
+    if (!eventProductEntityList.isEmpty()) {
+      for (EventProductEntity eventProduct : eventProductEntityList) {
+        eventProduct.softDelete(currentUser.userId(), ZoneId.systemDefault());
+      }
+    }
+
   }
 }

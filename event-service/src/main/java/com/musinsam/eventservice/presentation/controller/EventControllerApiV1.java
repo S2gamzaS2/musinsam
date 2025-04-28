@@ -116,6 +116,7 @@ public class EventControllerApiV1 {
       @PathVariable UUID eventId,
       @CurrentUser CurrentUserDtoApiV1 currentUser
   ) {
+    eventService.deleteEvent(eventId, currentUser);
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_DELETE_SUCCESS.getCode(),
         EVENT_DELETE_SUCCESS.getMessage(),
