@@ -24,8 +24,11 @@ import com.musinsam.eventservice.application.dto.request.ReqEventPutDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetProductByEventIdDtoApiV1;
+import com.musinsam.eventservice.application.service.EventServiceApiV1;
 import jakarta.validation.Valid;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,9 +40,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/events")
+@RequiredArgsConstructor
 public class EventControllerApiV1 {
+
+  private final EventServiceApiV1 eventService;
+
 
   /**
    * 이벤트 등록
@@ -50,12 +58,13 @@ public class EventControllerApiV1 {
       @Valid @RequestBody ReqEventPostDtoApiV1 dto,
       @CurrentUser CurrentUserDtoApiV1 currentUser
   ) {
+    eventService.createEvent(dto, currentUser);
+
     return ResponseEntity.ok(new ApiResponse<>(
-            EVENT_CREATE_SUCCESS.getCode(),
-            EVENT_CREATE_SUCCESS.getMessage(),
-            null
-        )
-    );
+        EVENT_CREATE_SUCCESS.getCode(),
+        EVENT_CREATE_SUCCESS.getMessage(),
+        null
+    ));
   }
 
   /**
@@ -76,7 +85,7 @@ public class EventControllerApiV1 {
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_GET_LIST_SUCCESS.getCode(),
         EVENT_GET_LIST_SUCCESS.getMessage(),
-        null
+        eventService.getEventList(currentUser, active, page, size)
     ));
   }
 
@@ -90,6 +99,7 @@ public class EventControllerApiV1 {
       @CurrentUser CurrentUserDtoApiV1 currentUser,
       @Valid @RequestBody ReqEventPutDtoApiV1 dto
   ) {
+    eventService.updateEvent(eventId, dto, currentUser);
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_UPDATE_SUCCESS.getCode(),
         EVENT_UPDATE_SUCCESS.getMessage(),
@@ -106,6 +116,7 @@ public class EventControllerApiV1 {
       @PathVariable UUID eventId,
       @CurrentUser CurrentUserDtoApiV1 currentUser
   ) {
+    eventService.deleteEvent(eventId, currentUser);
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_DELETE_SUCCESS.getCode(),
         EVENT_DELETE_SUCCESS.getMessage(),
@@ -129,7 +140,7 @@ public class EventControllerApiV1 {
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_GET_SUCCESS.getCode(),
         EVENT_GET_SUCCESS.getMessage(),
-        null
+        eventService.getEvent(eventId, currentUser)
     ));
   }
 
@@ -145,6 +156,7 @@ public class EventControllerApiV1 {
       @CurrentUser CurrentUserDtoApiV1 currentUser,
       @Valid @RequestBody ReqEventPostByEventIdDtoApiV1 dto
   ) {
+    eventService.addEventProduct(eventId, dto);
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_ADD_PRODUCT_SUCCESS.getCode(),
         EVENT_ADD_PRODUCT_SUCCESS.getMessage(),
@@ -164,13 +176,13 @@ public class EventControllerApiV1 {
   public ResponseEntity<ApiResponse<ResEventGetProductByEventIdDtoApiV1>> getEventProductList(
       @PathVariable UUID eventId,
       @CurrentUser CurrentUserDtoApiV1 currentUser,
-      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size
   ) {
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_GET_PRODUCT_LIST_SUCCESS.getCode(),
         EVENT_GET_PRODUCT_LIST_SUCCESS.getMessage(),
-        null
+        eventService.getEventProductList(eventId, currentUser, page, size)
     ));
   }
 
@@ -185,6 +197,7 @@ public class EventControllerApiV1 {
       @CurrentUser CurrentUserDtoApiV1 currentUser,
       @Valid @RequestBody ReqEventPutByEventProductIdDtoApiV1 dto
   ) {
+    eventService.updateEventProduct(eventId, eventProductId, currentUser, dto);
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_UPDATE_PRODUCT_SUCCESS.getCode(),
         EVENT_UPDATE_PRODUCT_SUCCESS.getMessage(),
@@ -202,6 +215,7 @@ public class EventControllerApiV1 {
       @PathVariable UUID eventProductId,
       @CurrentUser CurrentUserDtoApiV1 currentUser
   ) {
+    eventService.deleteEventProduct(eventId, eventProductId, currentUser);
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_DELETE_PRODUCT_SUCCESS.getCode(),
         EVENT_DELETE_PRODUCT_SUCCESS.getMessage(),

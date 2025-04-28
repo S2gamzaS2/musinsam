@@ -1,6 +1,7 @@
 package com.musinsam.eventservice.application.dto.request;
 
 import com.musinsam.eventservice.domain.event.entity.EventEntity;
+import com.musinsam.eventservice.domain.event.vo.EventStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -42,6 +43,7 @@ public class ReqEventPostDtoApiV1 {
           .name(name)
           .startTime(startTime)
           .endTime(endTime)
+          .status(EventStatus.SCHEDULED)
           .build();
     }
 
