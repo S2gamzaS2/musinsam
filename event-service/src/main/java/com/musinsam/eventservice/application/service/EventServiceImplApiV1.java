@@ -15,6 +15,7 @@ import com.musinsam.eventservice.domain.event.repository.EventProductRepository;
 import com.musinsam.eventservice.domain.event.repository.EventRepository;
 import com.musinsam.eventservice.domain.event.vo.EventStatus;
 import com.musinsam.eventservice.infrastructure.dto.res.ResProductInfoGetByProductId;
+import feign.FeignException;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
@@ -52,8 +53,14 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
       throw new RuntimeException("이미 등록된 상품입니다.");
     }
 
-    ResProductInfoGetByProductId productInfo = productClient.getProductInfo(
-        dto.getEventProduct().getProductId());
+    ResProductInfoGetByProductId productInfo;
+    try {
+      productInfo = productClient.getProductInfo(
+          dto.getEventProduct().getProductId());
+    } catch (FeignException e) {
+      throw new RuntimeException("상품을 등록할 수 없음돠 아마도 상품이 없음");
+    }
+
     String productName = productInfo.getProduct().getName();
 
     EventProductEntity eventProductEntity = dto.getEventProduct()
