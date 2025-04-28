@@ -85,7 +85,7 @@ public class EventControllerApiV1 {
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_GET_LIST_SUCCESS.getCode(),
         EVENT_GET_LIST_SUCCESS.getMessage(),
-        null
+        eventService.getEventList(currentUser, active, page, size)
     ));
   }
 
