@@ -6,6 +6,7 @@ import com.musinsam.eventservice.application.dto.request.ReqEventPostDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPutDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
+import com.musinsam.eventservice.application.dto.response.ResEventGetProductByEventIdDtoApiV1;
 import jakarta.validation.Valid;
 import java.util.UUID;
 
@@ -23,4 +24,7 @@ public interface EventServiceApiV1 {
   void updateEvent(UUID eventId, @Valid ReqEventPutDtoApiV1 dto, CurrentUserDtoApiV1 currentUser);
 
   void deleteEvent(UUID eventId, CurrentUserDtoApiV1 currentUser);
+
+  ResEventGetProductByEventIdDtoApiV1 getEventProductList(UUID eventId,
+      CurrentUserDtoApiV1 currentUser, int page, int size);
 }

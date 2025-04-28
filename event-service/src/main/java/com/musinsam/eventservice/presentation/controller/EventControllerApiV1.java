@@ -176,13 +176,13 @@ public class EventControllerApiV1 {
   public ResponseEntity<ApiResponse<ResEventGetProductByEventIdDtoApiV1>> getEventProductList(
       @PathVariable UUID eventId,
       @CurrentUser CurrentUserDtoApiV1 currentUser,
-      @RequestParam(defaultValue = "1") int page,
+      @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size
   ) {
     return ResponseEntity.ok(new ApiResponse<>(
         EVENT_GET_PRODUCT_LIST_SUCCESS.getCode(),
         EVENT_GET_PRODUCT_LIST_SUCCESS.getMessage(),
-        null
+        eventService.getEventProductList(eventId, currentUser, page, size)
     ));
   }
 

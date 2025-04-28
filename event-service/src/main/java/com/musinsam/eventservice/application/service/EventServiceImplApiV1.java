@@ -6,6 +6,7 @@ import com.musinsam.eventservice.application.dto.request.ReqEventPostDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPutDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
+import com.musinsam.eventservice.application.dto.response.ResEventGetProductByEventIdDtoApiV1;
 import com.musinsam.eventservice.domain.event.entity.EventEntity;
 import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
 import com.musinsam.eventservice.domain.event.repository.EventProductRepository;
@@ -107,5 +108,15 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
       }
     }
 
+  }
+
+  @Override
+  public ResEventGetProductByEventIdDtoApiV1 getEventProductList(UUID eventId,
+      CurrentUserDtoApiV1 currentUser, int page, int size) {
+
+    Pageable pageable = PageRequest.of(page, size);
+    Page<EventProductEntity> eventProductEntityPage = eventProductRepository.findByEventIdAndDeletedAtIsNull(
+        eventId, pageable);
+    return ResEventGetProductByEventIdDtoApiV1.of(eventProductEntityPage);
   }
 }
