@@ -19,7 +19,7 @@ import com.musinsam.productservice.domain.product.repository.ProductRepository;
 import com.musinsam.productservice.domain.product.repository.ProductRepositoryCustom;
 import com.musinsam.productservice.domain.product.vo.ProductStatus;
 import com.musinsam.productservice.global.exception.ProductErrorCode;
-import com.musinsam.productservice.infrastructure.dto.res.ReqProductSaveProductsDtoApiV1;
+import com.musinsam.productservice.infrastructure.dto.req.ReqProductSaveProductsDtoApiV1;
 import com.musinsam.productservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import com.musinsam.productservice.infrastructure.dto.res.ResShopCouponDtoApiV1;
 import com.musinsam.productservice.infrastructure.dto.res.ResShopCouponDtoApiV1.Coupon;
@@ -335,6 +335,7 @@ public class ProductServiceImplApiV2 implements ProductServiceApiV2 {
   }
 
   @Override
+  @Transactional
   public void updateDiscountRate(UUID productId, Integer discountRate) {
     log.info("########## updateDiscountRate 서비스 메서드 시작");
     ProductEntity productEntity = findProductEntityById(productId);
