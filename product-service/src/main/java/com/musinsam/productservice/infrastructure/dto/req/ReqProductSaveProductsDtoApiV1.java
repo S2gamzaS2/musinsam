@@ -1,4 +1,4 @@
-package com.musinsam.productservice.infrastructure.dto.res;
+package com.musinsam.productservice.infrastructure.dto.req;
 
 import java.time.LocalDateTime;
 import java.util.List;
