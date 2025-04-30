@@ -1,4 +1,4 @@
-package com.musinsam.productservice.application.service;
+package com.musinsam.productservice.application.service.V1;
 
 import com.musinsam.common.exception.CustomException;
 import com.musinsam.common.user.CurrentUserDtoApiV1;
