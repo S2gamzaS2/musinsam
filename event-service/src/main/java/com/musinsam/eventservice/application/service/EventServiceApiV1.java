@@ -9,6 +9,7 @@ import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDt
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetProductByEventIdDtoApiV1;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface EventServiceApiV1 {
@@ -33,4 +34,10 @@ public interface EventServiceApiV1 {
       @Valid ReqEventPutByEventProductIdDtoApiV1 dto);
 
   void deleteEventProduct(UUID eventId, UUID eventProductId, CurrentUserDtoApiV1 currentUser);
+
+  void startEvent(UUID eventId);
+
+  LocalDateTime getEndTime(UUID productId);
+
+  Integer getDiscountRate(UUID productId);
 }

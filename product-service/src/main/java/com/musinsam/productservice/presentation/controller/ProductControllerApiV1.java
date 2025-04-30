@@ -21,7 +21,7 @@ import com.musinsam.productservice.application.dto.request.ReqProductPutByProduc
 import com.musinsam.productservice.application.dto.response.ResProductGetByProductIdDtoApiV1;
 import com.musinsam.productservice.application.dto.response.ResProductGetDtoApiV1;
 import com.musinsam.productservice.application.dto.response.ResProductGetStockDtoApiV1;
-import com.musinsam.productservice.application.service.ProductServiceApiV1;
+import com.musinsam.productservice.application.service.V2.ProductServiceApiV2;
 import com.musinsam.productservice.domain.product.vo.ProductStatus;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
@@ -50,7 +50,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class ProductControllerApiV1 {
 
-  private final ProductServiceApiV1 productService;
+  //  private final ProductServiceApiV1 productService;
+  private final ProductServiceApiV2 productService;
 
   /**
    * 상품 등록

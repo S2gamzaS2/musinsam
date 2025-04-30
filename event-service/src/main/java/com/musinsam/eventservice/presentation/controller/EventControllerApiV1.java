@@ -223,4 +223,13 @@ public class EventControllerApiV1 {
     ));
   }
 
+  /**
+   * 임시 - 이벤트 시작시 상태변경 & 레디스저장
+   */
+  @PostMapping("/{eventId}/start")
+  public ResponseEntity<Void> startEvent(@PathVariable UUID eventId) {
+    eventService.startEvent(eventId);
+    return ResponseEntity.ok().build();
+  }
+
 }

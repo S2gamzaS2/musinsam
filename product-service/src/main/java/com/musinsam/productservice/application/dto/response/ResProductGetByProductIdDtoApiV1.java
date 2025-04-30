@@ -3,7 +3,9 @@ package com.musinsam.productservice.application.dto.response;
 import com.musinsam.productservice.domain.product.entity.ProductEntity;
 import com.musinsam.productservice.domain.product.entity.ProductImageEntity;
 import com.musinsam.productservice.infrastructure.dto.res.ResShopCouponDtoApiV1;
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResProductGetByProductIdDtoApiV1 {
+public class ResProductGetByProductIdDtoApiV1 implements Serializable {
 
   private Product product;
 
@@ -32,7 +34,7 @@ public class ResProductGetByProductIdDtoApiV1 {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class Product {
+  public static class Product implements Serializable {
 
     private UUID productId;
     private String name;
@@ -40,6 +42,7 @@ public class ResProductGetByProductIdDtoApiV1 {
     private BigDecimal discountPrice;
     private Shop shop;
     private List<Image> images;
+    private ZonedDateTime updatedAt;
 
 
     public static Product from(ProductEntity productEntity,
@@ -52,12 +55,15 @@ public class ResProductGetByProductIdDtoApiV1 {
           .price(productEntity.getPrice())
           .discountPrice(productEntity.getDiscountPrice())
           .images(Image.from(productImageEntity))
+          .updatedAt(productEntity.getUpdatedAt())
           .build();
     }
 
     @Getter
     @Builder
-    public static class Shop {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Shop implements Serializable {
 
       private UUID shopId;
       private String shopName;
@@ -75,7 +81,9 @@ public class ResProductGetByProductIdDtoApiV1 {
 
     @Getter
     @Builder
-    public static class Image {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Image implements Serializable {
 
       private UUID imageId;
       private String imageUrl;
