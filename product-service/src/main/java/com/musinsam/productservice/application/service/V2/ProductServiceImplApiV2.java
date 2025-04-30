@@ -100,10 +100,17 @@ public class ProductServiceImplApiV2 implements ProductServiceApiV2 {
     UUID shopId = product.getShopId();
     String shopName = shopClientApiV1.getShopInfo(shopId).getShop().getName();
 
-    ResShopCouponDtoApiV1 shopCouponDto = couponClientApiV1.getShopCouponList(shopId);
+    List<ResShopCouponDtoApiV1.Coupon> couponList = null;
+    try {
+      ResShopCouponDtoApiV1 shopCouponDto = couponClientApiV1.getShopCouponList(shopId);
+      couponList = shopCouponDto.getCouponList();
+
+    } catch (Exception e) {
+      log.error("###### 쿠폰 조회 실패");
+    }
 
     return ResProductGetByProductIdDtoApiV1.of(product,
-        productImages, shopName, shopCouponDto.getCouponList());
+        productImages, shopName, couponList);
   }
 
 
