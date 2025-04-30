@@ -41,6 +41,7 @@ public class ProductEntity extends BaseEntity {
   @Column(nullable = false)
   private BigDecimal price;
 
+  @Setter
   @Column
   private BigDecimal discountPrice;
 
