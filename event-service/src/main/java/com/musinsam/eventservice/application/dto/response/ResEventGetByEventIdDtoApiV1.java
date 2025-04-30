@@ -3,8 +3,9 @@ package com.musinsam.eventservice.application.dto.response;
 import com.musinsam.eventservice.domain.event.entity.EventEntity;
 import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
 import com.musinsam.eventservice.domain.event.vo.EventStatus;
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResEventGetByEventIdDtoApiV1 {
+public class ResEventGetByEventIdDtoApiV1 implements Serializable {
 
   private Event event;
 
@@ -32,12 +33,12 @@ public class ResEventGetByEventIdDtoApiV1 {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class Event {
+  public static class Event implements Serializable {
 
     private UUID id;
     private String name;
-    private ZonedDateTime startTime;
-    private ZonedDateTime endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private EventStatus status;
     private List<EventProduct> eventProduct;
 
@@ -47,8 +48,8 @@ public class ResEventGetByEventIdDtoApiV1 {
       return Event.builder()
           .id(eventEntity.getId())
           .name(eventEntity.getName())
-          .startTime(eventEntity.getStartTime())
-          .endTime(eventEntity.getEndTime())
+          .startTime(eventEntity.getStartTime().toLocalDateTime())
+          .endTime(eventEntity.getEndTime().toLocalDateTime())
           .status(eventEntity.getStatus())
           .eventProduct(EventProduct.from(eventProductEntityList))
           .build();
@@ -58,7 +59,7 @@ public class ResEventGetByEventIdDtoApiV1 {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class EventProduct {
+    public static class EventProduct implements Serializable {
 
       private UUID productId;
       private String productName;
