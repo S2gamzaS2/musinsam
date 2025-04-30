@@ -16,8 +16,9 @@ public interface EventProductRepository {
 
   Page<EventProductEntity> findByEventIdAndDeletedAtIsNull(UUID eventId, Pageable pageable);
 
-  Optional<EventProductEntity> findByIdAndEventIdAndDeletedAtIsNull(UUID eventProductId,
-      UUID eventId);
+  Optional<EventProductEntity> findByIdAndDeletedAtIsNull(UUID eventProductId);
 
   boolean existsByProductIdAndDeletedAtIsNull(@NotNull(message = "상품 ID를 입력해주세요.") UUID productId);
+
+  Optional<EventProductEntity> findByProductIdAndDeletedAtIsNull(UUID productId);
 }
