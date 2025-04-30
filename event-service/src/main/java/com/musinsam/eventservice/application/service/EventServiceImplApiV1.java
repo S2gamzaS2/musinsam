@@ -173,7 +173,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   public void updateEventProduct(UUID eventId, UUID eventProductId, CurrentUserDtoApiV1 currentUser,
       ReqEventPutByEventProductIdDtoApiV1 dto) {
 
-    EventProductEntity eventProductEntity = findEventProductEntityByIdAndEventId(eventProductId);
+    EventProductEntity eventProductEntity = findEventProductEntityById(eventProductId);
     dto.getEventProduct().updateOf(eventProductEntity);
 
     EventEntity eventEntity = findEventEntityById(eventId);
@@ -200,7 +200,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
     String redisKey = buildEventCacheKey(eventId);
     ResEventGetByEventIdDtoApiV1 cachedEvent = valueOps.get(redisKey);
 
-    EventProductEntity eventProductEntity = findEventProductEntityByIdAndEventId(eventProductId);
+    EventProductEntity eventProductEntity = findEventProductEntityById(eventProductId);
     eventProductEntity.softDelete(currentUser.userId(), ZoneId.systemDefault());
 
     EventEntity eventEntity = findEventEntityById(eventId);
@@ -279,7 +279,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   }
 
   // 이벤트 상품 조회
-  private EventProductEntity findEventProductEntityByIdAndEventId(UUID id) {
+  private EventProductEntity findEventProductEntityById(UUID id) {
     return eventProductRepository.findByIdAndDeletedAtIsNull(id)
         .orElseThrow(() -> new RuntimeException("해당 이벤트 상품 없음"));
   }
