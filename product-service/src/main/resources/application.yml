@@ -8,6 +8,7 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
 
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,6 +20,11 @@ spring:
         use_sql_comments: true
         default_batch_fetch_size: 500 # 한 번 조회시 세트로 조회
     open-in-view: false # OSIV 비활성화: 서비스 종료 시점에 세션 종료 → 뷰에서의 지연 로딩 방지 및 DB 커넥션 반환
+  data:
+    redis:
+      host: localhost
+      port: 6382
+      database: 0
 
 server:
   port: 11002
