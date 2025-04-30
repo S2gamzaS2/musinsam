@@ -1,7 +1,7 @@
 package com.musinsam.productservice.presentation.controller;
 
 import com.musinsam.productservice.application.service.V2.ProductServiceApiV2;
-import com.musinsam.productservice.infrastructure.dto.res.ReqProductSaveProductsDtoApiV1;
+import com.musinsam.productservice.infrastructure.dto.req.ReqProductSaveProductsDtoApiV1;
 import com.musinsam.productservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
