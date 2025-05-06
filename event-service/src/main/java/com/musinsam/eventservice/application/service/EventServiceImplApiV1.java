@@ -309,6 +309,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
     // 만료 시간이 0 이하인 경우 처리
     if (ttlInSeconds <= 0) {
       log.warn("이벤트 종료 시간이 현재 시간보다 이전입니다.");
+      eventEntity.setStatus(EventStatus.COMPLETED);
       return;
     }
 
