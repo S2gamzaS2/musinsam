@@ -1,6 +1,7 @@
 package com.musinsam.productservice.presentation.controller;
 
 import com.musinsam.productservice.application.service.V2.ProductServiceApiV2;
+import com.musinsam.productservice.infrastructure.dto.req.ReqProductDeleteEventDto;
 import com.musinsam.productservice.infrastructure.dto.req.ReqProductSaveProductsDtoApiV1;
 import com.musinsam.productservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import java.util.UUID;
@@ -84,6 +85,15 @@ public class ProductInternalControllerApiV1 {
   public ResponseEntity<Void> deleteEventProduct(@RequestParam UUID productId) {
     log.info("********** deleteEventProduct 컨트롤러 호출 완료");
     productService.deleteEventProduct(productId);
+    return ResponseEntity.ok().build();
+  }
+
+  /**
+   * 이벤트 삭제
+   */
+  @PostMapping("/close-event")
+  public ResponseEntity<Void> closeEvent(@RequestBody ReqProductDeleteEventDto dto) {
+    productService.closeEvent(dto);
     return ResponseEntity.ok().build();
   }
 

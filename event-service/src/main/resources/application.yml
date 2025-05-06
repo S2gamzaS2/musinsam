@@ -23,6 +23,41 @@ spring:
       port: 6383
       database: 0
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    properties:
+      org.quartz:
+        jobStore:
+          isClustered: true
+          useProperties: false
+          class: org.quartz.impl.jdbcjobstore.JobStoreTX
+          driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+          dataSource: quartzDS
+          misfireThreshold: 60000
+        scheduler:
+          instanceId: AUTO
+        threadPool:
+          threadCount: 10
+        dataSource:
+          quartzDS:
+            driver: org.postgresql.Driver
+            URL: jdbc:postgresql://localhost:5433/quartz
+            user: postgres
+            password: postgres
+            maxConnections: 5
+
+
 server:
   port: 11001
 

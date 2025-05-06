@@ -1,6 +1,6 @@
 package com.musinsam.productservice.infrastructure.dto.req;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class ReqProductSaveProductsDtoApiV1 {
 
   private List<EventProduct> eventProductList;
-  private LocalDateTime endTime;
+  private ZonedDateTime endTime;
 
   @Builder
   @Getter

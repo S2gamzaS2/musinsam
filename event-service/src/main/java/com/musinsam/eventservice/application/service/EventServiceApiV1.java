@@ -37,6 +37,8 @@ public interface EventServiceApiV1 {
 
   void startEvent(UUID eventId);
 
+  void endEvent(UUID eventId);
+
   LocalDateTime getEndTime(UUID productId);
 
   Integer getDiscountRate(UUID productId);

@@ -18,7 +18,8 @@ public interface EventProductRepository {
 
   Optional<EventProductEntity> findByIdAndDeletedAtIsNull(UUID eventProductId);
 
-  boolean existsByProductIdAndDeletedAtIsNull(@NotNull(message = "상품 ID를 입력해주세요.") UUID productId);
-
   Optional<EventProductEntity> findByProductIdAndDeletedAtIsNull(UUID productId);
+
+  boolean existsByEventIdAndProductIdAndDeletedAtIsNull(UUID eventId,
+      @NotNull(message = "상품 ID를 입력해주세요.") UUID productId);
 }

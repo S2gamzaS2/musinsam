@@ -1,32 +1,67 @@
 services:
-  redis:
+  redis-product:
     image: redis:latest
-    container_name: redis-user
+    container_name: redis-product
     ports:
-      - "6379:6379"
+      - "6382:6379"
     volumes:
-      - ./redis-config:/usr/local/etc/redis
-    networks:
-      - laboratory-network
-  postgres:
-    image: postgres:latest
-    container_name: postgres-db
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-      TZ: Asia/Seoul
-    command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./redis-product-config:/usr/local/etc/redis
     networks:
       - laboratory-network
 
-volumes:
-  postgres_data:
+  redis-event:
+    image: redis:latest
+    container_name: redis-event
+    ports:
+      - "6383:6379"
+    volumes:
+      - ./redis-event-config:/usr/local/etc/redis
+    networks:
+      - laboratory-network
+
+  kafka-event:
+    image: 'confluentinc/cp-kafka:latest'
+    container_name: kafka-event
+    ports:
+      - "9092:9092"
+    environment:
+      # 기본 식별자
+      - KAFKA_NODE_ID=1
+      - CLUSTER_ID='7e3a5b41-1f6c-44f6-a0d4-1a91fa6a5f8d'
+
+      # 기본 리스너 설정
+      - KAFKA_LISTENERS=INSIDE://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=INSIDE://kafka-event:29092,OUTSIDE://localhost:9092,CONTROLLER://kafka-event:9093
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INSIDE
+
+      # KRaft 모드 활성화
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka-event:9093
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+
+      # 단일 노드이므로 복제 계수 1
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+    volumes:
+      - ./.data/kafka-event:/var/lib/kafka/data
+    networks:
+      - laboratory-network
+
+  kafka-ui-event:
+    image: 'provectuslabs/kafka-ui:latest'
+    container_name: kafka-event-ui
+    ports:
+      - "19090:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=event
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-event:29092
+    networks:
+      - laboratory-network
+    depends_on:
+      - kafka-event
+
 
 networks:
   laboratory-network:
