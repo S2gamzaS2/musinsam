@@ -1,4 +1,4 @@
-package com.musinsam.eventservice.global.config;
+package com.musinsam.eventservice.domain.event.vo;
 
 import com.musinsam.common.response.SuccessCode;
 import lombok.Getter;

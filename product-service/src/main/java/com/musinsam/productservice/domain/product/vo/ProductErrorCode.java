@@ -1,4 +1,4 @@
-package com.musinsam.productservice.global.exception;
+package com.musinsam.productservice.domain.product.vo;
 
 import com.musinsam.common.exception.ErrorCode;
 import lombok.Getter;

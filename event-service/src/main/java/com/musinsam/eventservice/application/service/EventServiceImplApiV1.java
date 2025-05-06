@@ -1,5 +1,6 @@
 package com.musinsam.eventservice.application.service;
 
+import com.musinsam.common.exception.CustomException;
 import com.musinsam.common.user.CurrentUserDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.dto.request.ReqEventPostDtoApiV1;
@@ -15,6 +16,7 @@ import com.musinsam.eventservice.domain.event.entity.EventEntity;
 import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
 import com.musinsam.eventservice.domain.event.repository.EventProductRepository;
 import com.musinsam.eventservice.domain.event.repository.EventRepository;
+import com.musinsam.eventservice.domain.event.vo.EventErrorCode;
 import com.musinsam.eventservice.domain.event.vo.EventStatus;
 import com.musinsam.eventservice.infrastructure.dto.req.ReqProductDeleteEventDto;
 import com.musinsam.eventservice.infrastructure.dto.req.ReqProductSaveProductsDtoApiV1;
@@ -81,7 +83,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
     if (eventProductRepository.existsByEventIdAndProductIdAndDeletedAtIsNull(
         eventId,
         dto.getEventProduct().getProductId())) {
-      throw new RuntimeException("이미 등록된 상품입니다.");
+      throw new CustomException(EventErrorCode.PRODUCT_ALREADY_REGISTERED);
     }
 
     ResProductInfoGetByProductId productInfo;
@@ -89,7 +91,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
       productInfo = productClient.getProductInfo(
           dto.getEventProduct().getProductId());
     } catch (FeignException e) {
-      throw new RuntimeException("상품을 등록할 수 없음돠 아마도 상품이 없음");
+      throw new CustomException(EventErrorCode.PRODUCT_NOT_FOUND);
     }
 
     String productName = productInfo.getProduct().getName();
@@ -283,7 +285,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
 
     } catch (SchedulerException e) {
       log.error("이벤트 스케줄링 실패: {}", eventEntity.getId(), e);
-      throw new RuntimeException("이벤트 스케줄링 실패", e);
+      throw new CustomException(EventErrorCode.EVENT_SCHEDULING_FAILED);
     }
   }
 
@@ -352,10 +354,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   @Override
   public LocalDateTime getEndTime(UUID productId) {
 
-    EventProductEntity eventProductEntity = eventProductRepository.findByProductIdAndDeletedAtIsNull(
-            productId)
-        .orElseThrow(() -> new RuntimeException("해당 이벤트 상품이 없음"));
-
+    EventProductEntity eventProductEntity = findEventProductEntityByProductId(productId);
     return eventProductEntity.getEvent().getEndTime().toLocalDateTime();
   }
 
@@ -363,10 +362,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   @Override
   public Integer getDiscountRate(UUID productId) {
 
-    EventProductEntity eventProductEntity = eventProductRepository.findByProductIdAndDeletedAtIsNull(
-            productId)
-        .orElseThrow(() -> new RuntimeException("해당 이벤트 상품이 없음"));
-
+    EventProductEntity eventProductEntity = findEventProductEntityByProductId(productId);
     return eventProductEntity.getDiscountRate();
   }
 
@@ -377,13 +373,20 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   // 이벤트 엔티티 조회
   private EventEntity findEventEntityById(UUID eventId) {
     return eventRepository.findByIdAndDeletedAtIsNull(eventId)
-        .orElseThrow(() -> new RuntimeException("해딩 이벤트 없음"));
+        .orElseThrow(() -> new CustomException(EventErrorCode.EVENT_NOT_FOUND));
   }
 
-  // 이벤트 상품 조회
+  // 이벤트 상품 조회 - Id
   private EventProductEntity findEventProductEntityById(UUID id) {
     return eventProductRepository.findByIdAndDeletedAtIsNull(id)
-        .orElseThrow(() -> new RuntimeException("해당 이벤트 상품 없음"));
+        .orElseThrow(() -> new CustomException(EventErrorCode.EVENT_PRODUCT_NOT_FOUND));
+  }
+
+  // 이벤트 상품 조회 - 상품Id
+  private EventProductEntity findEventProductEntityByProductId(UUID productId) {
+    return eventProductRepository.findByProductIdAndDeletedAtIsNull(
+            productId)
+        .orElseThrow(() -> new CustomException(EventErrorCode.EVENT_PRODUCT_NOT_FOUND));
   }
 
   // 이벤트 상품 리스트 조회
