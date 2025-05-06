@@ -9,22 +9,35 @@ import com.musinsam.eventservice.application.dto.response.ResEventGetByEventIdDt
 import com.musinsam.eventservice.application.dto.response.ResEventGetDtoApiV1;
 import com.musinsam.eventservice.application.dto.response.ResEventGetProductByEventIdDtoApiV1;
 import com.musinsam.eventservice.application.integration.ProductClient;
+import com.musinsam.eventservice.application.scheduler.EventEndJob;
+import com.musinsam.eventservice.application.scheduler.EventStartJob;
 import com.musinsam.eventservice.domain.event.entity.EventEntity;
 import com.musinsam.eventservice.domain.event.entity.EventProductEntity;
 import com.musinsam.eventservice.domain.event.repository.EventProductRepository;
 import com.musinsam.eventservice.domain.event.repository.EventRepository;
 import com.musinsam.eventservice.domain.event.vo.EventStatus;
+import com.musinsam.eventservice.infrastructure.dto.req.ReqProductDeleteEventDto;
 import com.musinsam.eventservice.infrastructure.dto.req.ReqProductSaveProductsDtoApiV1;
 import com.musinsam.eventservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import feign.FeignException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +56,7 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   private final ProductClient productClient;
   private final ValueOperations<String, ResEventGetByEventIdDtoApiV1> valueOps;
   private final RedisTemplate<String, ResEventGetByEventIdDtoApiV1> redisTemplate;
+  private final Scheduler scheduler;
 
   private final static String EVENT_CACHE_KEY_PREFIX = "event:";
 
@@ -50,8 +64,11 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   @Transactional
   public void createEvent(ReqEventPostDtoApiV1 dto, CurrentUserDtoApiV1 currentUser) {
 
+    log.info("########## 이벤트 생성 시작");
     EventEntity eventEntity = dto.getEvent().toEntity();
     eventRepository.save(eventEntity);
+
+    scheduledEvent(eventEntity);
   }
 
 
@@ -61,7 +78,8 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
 
     EventEntity eventEntity = findEventEntityById(eventId);
 
-    if (eventProductRepository.existsByProductIdAndDeletedAtIsNull(
+    if (eventProductRepository.existsByEventIdAndProductIdAndDeletedAtIsNull(
+        eventId,
         dto.getEventProduct().getProductId())) {
       throw new RuntimeException("이미 등록된 상품입니다.");
     }
@@ -216,20 +234,83 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
   }
 
 
+  private void scheduledEvent(EventEntity eventEntity) {
+
+    String eventIdStr = eventEntity.getId().toString();
+
+    try {
+      JobDataMap jobDataMap = new JobDataMap();
+      jobDataMap.put("eventId", eventEntity.getId().toString());
+
+      JobDetail startJobDetail = JobBuilder.newJob(EventStartJob.class)
+          .withIdentity("startEvent-" + eventIdStr, "eventGroup")
+          .withDescription("이벤트 시작 작업: " + eventEntity.getName())
+          .usingJobData(jobDataMap)
+          .storeDurably()
+          .build();
+
+      JobDetail endJobDetail = JobBuilder.newJob(EventEndJob.class)
+          .withIdentity("endEvent-" + eventIdStr, "eventGroup")
+          .withDescription("이벤트 종료 작업: " + eventEntity.getName())
+          .usingJobData(jobDataMap)
+          .storeDurably()
+          .build();
+
+      Date startDate = Date.from(eventEntity.getStartTime().toInstant());
+      Date endDate = Date.from(eventEntity.getEndTime().toInstant());
+
+      Trigger startTrigger = TriggerBuilder.newTrigger()
+          .withIdentity("startTrigger-" + eventIdStr, "eventGroup")
+          .startAt(startDate)
+          .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+              .withMisfireHandlingInstructionFireNow()) // 놓친 실행 즉시 처리
+          .forJob(startJobDetail)
+          .build();
+
+      Trigger endTrigger = TriggerBuilder.newTrigger()
+          .withIdentity("endTrigger-" + eventIdStr, "eventGroup")
+          .startAt(endDate)
+          .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+              .withMisfireHandlingInstructionFireNow()) // 놓친 실행 즉시 처리
+          .forJob(endJobDetail)
+          .build();
+
+      scheduler.scheduleJob(startJobDetail, startTrigger);
+      scheduler.scheduleJob(endJobDetail, endTrigger);
+
+      log.info("이벤트 시작 스케줄링 완료: {}, 시작 시간: {}", eventEntity.getName(), eventEntity.getStartTime());
+      log.info("이벤트 종료 스케줄링 완료: {}, 종료 시간: {}", eventEntity.getName(), eventEntity.getEndTime());
+
+    } catch (SchedulerException e) {
+      log.error("이벤트 스케줄링 실패: {}", eventEntity.getId(), e);
+      throw new RuntimeException("이벤트 스케줄링 실패", e);
+    }
+  }
+
+
   // 이벤트 시작 시
   @Override
   @Transactional
   public void startEvent(UUID eventId) {
 
+    log.info("###### 이벤트 시작: {}", eventId);
+
     EventEntity eventEntity = findEventEntityById(eventId);
     List<EventProductEntity> eventProductEntityList = getEventProductEntityList(eventId);
 
+    log.info("###### 이벤트 이름: {}", eventEntity.getName());
     eventEntity.setStatus(EventStatus.ACTIVE);
 
     String redisKey = buildEventCacheKey(eventId);
 
-    LocalDateTime endTime = eventEntity.getEndTime().toLocalDateTime();
-    long ttlInSeconds = Duration.between(LocalDateTime.now(), endTime).getSeconds();
+    ZonedDateTime endTime = eventEntity.getEndTime();
+    long ttlInSeconds = Duration.between(ZonedDateTime.now(), endTime).getSeconds();
+
+    // 만료 시간이 0 이하인 경우 처리
+    if (ttlInSeconds <= 0) {
+      log.warn("이벤트 종료 시간이 현재 시간보다 이전입니다.");
+      return;
+    }
 
     valueOps.set(redisKey, ResEventGetByEventIdDtoApiV1.of(eventEntity, eventProductEntityList),
         ttlInSeconds, TimeUnit.SECONDS);
@@ -243,6 +324,26 @@ public class EventServiceImplApiV1 implements EventServiceApiV1 {
     log.info("########## 상품서비스 레디스 저장 완료");
   }
 
+  @Override
+  @Transactional
+  public void endEvent(UUID eventId) {
+
+    log.info("###### 이벤트 종료: {}", eventId);
+
+    EventEntity eventEntity = findEventEntityById(eventId);
+    eventEntity.setStatus(EventStatus.COMPLETED);
+
+    List<EventProductEntity> eventProductEntityList = getEventProductEntityList(eventId);
+    ReqProductDeleteEventDto dto = ReqProductDeleteEventDto.of(eventProductEntityList);
+    log.info("###### 이벤트 이름: {}", eventEntity.getName());
+
+    String redisKey = buildEventCacheKey(eventId);
+    redisTemplate.delete(redisKey);
+    productClient.closeEvent(dto);
+
+    log.info("###### 이벤트 종료완료");
+
+  }
 
   /**
    * feign
