@@ -19,7 +19,7 @@ public class ReqProductDeleteEventDto {
   public static ReqProductDeleteEventDto of(List<EventProductEntity> eventProductEntityList) {
     return ReqProductDeleteEventDto.builder()
         .productIdList(eventProductEntityList.stream()
-            .map(eventPRoductEntity -> eventPRoductEntity.getProductId()).toList())
+            .map(eventProductEntity -> eventProductEntity.getProductId()).toList())
         .build();
   }
 
