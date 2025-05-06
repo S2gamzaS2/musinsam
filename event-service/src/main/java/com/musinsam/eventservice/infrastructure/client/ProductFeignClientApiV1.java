@@ -1,6 +1,7 @@
 package com.musinsam.eventservice.infrastructure.client;
 
 import com.musinsam.eventservice.application.integration.ProductClient;
+import com.musinsam.eventservice.infrastructure.dto.req.ReqProductDeleteEventDto;
 import com.musinsam.eventservice.infrastructure.dto.req.ReqProductSaveProductsDtoApiV1;
 import com.musinsam.eventservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import java.util.UUID;
@@ -30,5 +31,9 @@ public interface ProductFeignClientApiV1 extends ProductClient {
   // 이벤트 상품 삭제
   @PostMapping("/internal/v1/products/delete")
   void deleteEventProduct(@RequestParam UUID productId);
+
+  // 이벤트 삭제
+  @PostMapping("/internal/v1/products/close-event")
+  void closeEvent(@RequestBody ReqProductDeleteEventDto dto);
 
 }

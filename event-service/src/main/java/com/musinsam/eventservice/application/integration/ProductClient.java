@@ -1,5 +1,6 @@
 package com.musinsam.eventservice.application.integration;
 
+import com.musinsam.eventservice.infrastructure.dto.req.ReqProductDeleteEventDto;
 import com.musinsam.eventservice.infrastructure.dto.req.ReqProductSaveProductsDtoApiV1;
 import com.musinsam.eventservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import java.util.UUID;
@@ -13,4 +14,6 @@ public interface ProductClient {
   void updateDiscountRate(UUID productId, Integer discountRate);
 
   void deleteEventProduct(UUID productId);
+
+  void closeEvent(ReqProductDeleteEventDto dto);
 }
