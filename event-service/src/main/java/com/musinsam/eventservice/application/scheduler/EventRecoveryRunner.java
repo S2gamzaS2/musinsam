@@ -26,7 +26,7 @@ public class EventRecoveryRunner implements ApplicationRunner {
     ZonedDateTime now = ZonedDateTime.now();
 
     // 1. 시작되어야 하지만 아직 SCHEDULED 상태인 이벤트
-    List<EventEntity> missedStartEventList = eventRepository.findByStartTimeBeforeAndStatus(
+    List<EventEntity> missedStartEventList = eventRepository.findByStartTimeBeforeAndStatusAndDeletedAtIsNull(
         now,
         EventStatus.SCHEDULED);
     log.info("미처리 시작 이벤트 수: {}", missedStartEventList.size());
@@ -42,7 +42,8 @@ public class EventRecoveryRunner implements ApplicationRunner {
     }
 
     // 2. 종료되어야 하지만 아직 ACTIVE 상태인 이벤트
-    List<EventEntity> missedEndEventList = eventRepository.findByEndTimeBeforeAndStatus(now,
+    List<EventEntity> missedEndEventList = eventRepository.findByEndTimeBeforeAndStatusAndDeletedAtIsNull(
+        now,
         EventStatus.ACTIVE);
     log.info("미처리 종료 이벤트 수: {}", missedEndEventList.size());
 

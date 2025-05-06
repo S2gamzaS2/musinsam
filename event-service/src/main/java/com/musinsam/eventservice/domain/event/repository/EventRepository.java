@@ -19,7 +19,9 @@ public interface EventRepository {
 
   Page<EventEntity> findByStatusAndDeletedAtIsNull(EventStatus eventStatus, Pageable pageable);
 
-  List<EventEntity> findByStartTimeBeforeAndStatus(ZonedDateTime now, EventStatus eventStatus);
+  List<EventEntity> findByStartTimeBeforeAndStatusAndDeletedAtIsNull(ZonedDateTime now,
+      EventStatus eventStatus);
 
-  List<EventEntity> findByEndTimeBeforeAndStatus(ZonedDateTime now, EventStatus eventStatus);
+  List<EventEntity> findByEndTimeBeforeAndStatusAndDeletedAtIsNull(ZonedDateTime now,
+      EventStatus eventStatus);
 }
