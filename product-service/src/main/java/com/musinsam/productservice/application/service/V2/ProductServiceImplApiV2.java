@@ -19,6 +19,7 @@ import com.musinsam.productservice.domain.product.repository.ProductRepository;
 import com.musinsam.productservice.domain.product.repository.ProductRepositoryCustom;
 import com.musinsam.productservice.domain.product.vo.ProductStatus;
 import com.musinsam.productservice.global.exception.ProductErrorCode;
+import com.musinsam.productservice.infrastructure.dto.req.ReqProductDeleteEventDto;
 import com.musinsam.productservice.infrastructure.dto.req.ReqProductSaveProductsDtoApiV1;
 import com.musinsam.productservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import com.musinsam.productservice.infrastructure.dto.res.ResShopCouponDtoApiV1;
@@ -30,6 +31,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -306,7 +308,7 @@ public class ProductServiceImplApiV2 implements ProductServiceApiV2 {
       return;
     }
 
-    long ttlInSeconds = Duration.between(LocalDateTime.now(), dto.getEndTime()).getSeconds();
+    long ttlInSeconds = Duration.between(ZonedDateTime.now(), dto.getEndTime()).getSeconds();
     log.info("######## 이벤트 종료시간: {}", dto.getEndTime());
     log.info("ttlInSeconds: {}", ttlInSeconds);
 
@@ -374,6 +376,19 @@ public class ProductServiceImplApiV2 implements ProductServiceApiV2 {
     deleteProductCache(productId);
     ProductEntity productEntity = findProductEntityById(productId);
     productEntity.setDiscountPrice(null);
+  }
+
+  @Override
+  @Transactional
+  public void closeEvent(ReqProductDeleteEventDto dto) {
+
+    List<UUID> productIdList = dto.getProductIdList();
+
+    for (UUID productId : productIdList) {
+      ProductEntity product = findProductEntityById(productId);
+      product.setDiscountPrice(null);
+      deleteProductCache(productId);
+    }
   }
 
 

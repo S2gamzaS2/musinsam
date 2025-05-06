@@ -8,6 +8,7 @@ import com.musinsam.productservice.application.dto.response.ResProductGetByProdu
 import com.musinsam.productservice.application.dto.response.ResProductGetDtoApiV1;
 import com.musinsam.productservice.application.dto.response.ResProductGetStockDtoApiV1;
 import com.musinsam.productservice.domain.product.vo.ProductStatus;
+import com.musinsam.productservice.infrastructure.dto.req.ReqProductDeleteEventDto;
 import com.musinsam.productservice.infrastructure.dto.req.ReqProductSaveProductsDtoApiV1;
 import com.musinsam.productservice.infrastructure.dto.res.ResProductInfoGetByProductId;
 import com.musinsam.productservice.infrastructure.s3.S3Folder;
@@ -60,4 +61,6 @@ public interface ProductServiceApiV2 {
   void updateDiscountRate(UUID productId, Integer discountRate);
 
   void deleteEventProduct(UUID productId);
+
+  void closeEvent(ReqProductDeleteEventDto dto);
 }
