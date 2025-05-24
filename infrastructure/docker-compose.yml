@@ -3,51 +3,51 @@ services:
     image: redis:latest
     container_name: redis-user
     ports:
-      - "6379:6379"
+      - "6378:6379"
     volumes:
       - ./redis-user-config:/usr/local/etc/redis
     networks:
       - laboratory-network
-
-  redis-coupon:
-    image: redis:latest
-    container_name: redis-coupon
-    ports:
-      - "6380:6379"
-    volumes:
-      - ./redis-coupon-config:/usr/local/etc/redis
-    networks:
-      - laboratory-network
-
-  redis-order:
-    image: redis:latest
-    container_name: redis-order
-    ports:
-      - "6381:6379"
-    volumes:
-      - ./redis-order-config:/usr/local/etc/redis
-    networks:
-      - laboratory-network
-
-  redis-product:
-    image: redis:latest
-    container_name: redis-product
-    ports:
-      - "6382:6379"
-    volumes:
-      - ./redis-product-config:/usr/local/etc/redis
-    networks:
-      - laboratory-network
-
-  redis-event:
-    image: redis:latest
-    container_name: redis-event
-    ports:
-      - "6383:6379"
-    volumes:
-      - ./redis-product-config:/usr/local/etc/redis
-    networks:
-      - laboratory-network
+  #
+  #  redis-coupon:
+  #    image: redis:latest
+  #    container_name: redis-coupon
+  #    ports:
+  #      - "6380:6379"
+  #    volumes:
+  #      - ./redis-coupon-config:/usr/local/etc/redis
+  #    networks:
+  #      - laboratory-network
+  #
+  #  redis-order:
+  #    image: redis:latest
+  #    container_name: redis-order
+  #    ports:
+  #      - "6381:6379"
+  #    volumes:
+  #      - ./redis-order-config:/usr/local/etc/redis
+  #    networks:
+  #      - laboratory-network
+  #
+  #  redis-product:
+  #    image: redis:latest
+  #    container_name: redis-product
+  #    ports:
+  #      - "6382:6379"
+  #    volumes:
+  #      - ./redis-product-config:/usr/local/etc/redis
+  #    networks:
+  #      - laboratory-network
+  #
+  #  redis-event:
+  #    image: redis:latest
+  #    container_name: redis-event
+  #    ports:
+  #      - "6383:6379"
+  #    volumes:
+  #      - ./redis-product-config:/usr/local/etc/redis
+  #    networks:
+  #      - laboratory-network
 
   #  postgres:
   #    image: postgres:latest

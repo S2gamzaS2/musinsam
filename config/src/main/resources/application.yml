@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: config
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/S2gamzaS2/musinsam-config.git
+          default-label: main
+          search-paths: '{application}'
+          username: ${GIT_USERNAME}
+          password: ${GIT_PASSWORD}
+server:
+  port: 8888

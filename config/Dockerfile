@@ -1,5 +1,5 @@
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
 COPY *.jar app.jar
-EXPOSE 8761
+EXPOSE 8888
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

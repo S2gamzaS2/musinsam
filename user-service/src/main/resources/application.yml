@@ -1,63 +1,16 @@
-server:
-  port: 10001
-
 spring:
   application:
     name: user-service
 
-  jackson:
-    mapper:
-      accept-case-insensitive-enums: true
+  config:
+    import: "optional:configserver:http://3.37.74.44:8888"
+  cloud:
+    config:
+      fail-fast: true #Config 서버 연결 실패 시 어플리케이션 시작 실패
 
-  datasource:
-    url: jdbc:postgresql://localhost:5433/postgres
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    defer-datasource-initialization: true
-    show-sql: true
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-
-  data:
-    redis:
-      host: localhost
-      port: 6379
-      username: default
-      password: systempass
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    prefer-ip-address: true
-
-
-jwt:
-  secret: 401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429080fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1
-  access:
-    expiration: 36000000 # 10시간
-  refresh:
-    expiration: 86400000 # 24시간
-  cookie:
-    secure: false
-    httpOnly: true
-    sameSite: Lax
-    domain: localhost
-    path: /
-
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
+# Actuator 설정 (설정 갱신을 위해 필요한 경우)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health,info

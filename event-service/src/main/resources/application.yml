@@ -2,67 +2,15 @@ spring:
   application:
     name: event-service
 
-  datasource:
-    url: jdbc:postgresql://localhost:5433/postgres
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+  config:
+    import: "optional:configserver:http://3.37.74.44:8888"
+  cloud:
+    config:
+      fail-fast: true #Config 서버 연결 실패 시 어플리케이션 시작 실패
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
-  data:
-    redis:
-      host: localhost
-      port: 6383
-      database: 0
-
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-
-  quartz:
-    job-store-type: jdbc
-    jdbc:
-      initialize-schema: never
-    properties:
-      org.quartz:
-        jobStore:
-          isClustered: true
-          useProperties: false
-          class: org.quartz.impl.jdbcjobstore.JobStoreTX
-          driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-          dataSource: quartzDS
-          misfireThreshold: 60000
-        scheduler:
-          instanceId: AUTO
-        threadPool:
-          threadCount: 10
-        dataSource:
-          quartzDS:
-            driver: org.postgresql.Driver
-            URL: jdbc:postgresql://localhost:5433/quartz
-            user: postgres
-            password: postgres
-            maxConnections: 5
-
-
-server:
-  port: 11001
-
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
+# Actuator 설정 (설정 갱신을 위해 필요한 경우)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health,info

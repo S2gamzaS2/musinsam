@@ -1,0 +1,68 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      TZ: Asia/Seoul
+    command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - laboratory-network
+
+  quartz:
+    image: postgres:16
+    container_name: quartz-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: quartz
+      TZ: Asia/Seoul
+    command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
+    ports:
+      - "5433:5432"
+    volumes:
+      - quartz_data:/var/lib/postgresql/data
+    networks:
+      - laboratory-network
+
+  redis-product:
+    image: redis:7
+    container_name: redis-product
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - laboratory-network
+
+  redis-event:
+    image: redis:7
+    container_name: redis-event
+    restart: always
+    ports:
+      - "6380:6379"
+    networks:
+      - laboratory-network
+
+  redis-user:
+    image: redis:7
+    container_name: redis-user
+    ports:
+      - "6381:6379"
+    networks:
+      - laboratory-network
+
+volumes:
+  postgres_data:
+  quartz_data:
+
+networks:
+  laboratory-network:
+    driver: bridge
